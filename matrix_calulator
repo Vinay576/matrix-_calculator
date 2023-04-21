@@ -1,0 +1,171 @@
+# function to print a matrix
+def print_matrix(matrix):
+    for row in matrix:
+        print(row)
+
+# function to find the determinant of 2×2 matrix
+def determinant_2x2(matrix):
+    return matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0]
+
+# function to find the determinant of 3×3 matrix
+def determinant_3x3(matrix):
+    a, b, c = matrix[0]
+    d, e, f = matrix[1]
+    g, h, i = matrix[2]
+    return a * determinant_2x2([[e, f], [h, i]]) - b * determinant_2x2([[d, f], [g, i]]) + c * determinant_2x2([[d, e], [g, h]])
+
+# function to find the minor of an element in a matrix
+def minor(matrix, i, j):
+    return determinant_2x2([row[:j] + row[j+1:] for row in (matrix[:i]+matrix[i+1:])])
+
+# function to find the cofactor of an element in a matrix
+def cofactor(matrix, i, j):
+    return (-1)**(i+j) * minor(matrix, i, j)
+
+# function to add two matrices
+def add_matrices(matrix1, matrix2):
+    result_matrix = []
+    for i in range(len(matrix1)):
+        row = []
+        for j in range(len(matrix1[0])):
+            row.append(matrix1[i][j] + matrix2[i][j])
+        result_matrix.append(row)
+    return result_matrix
+
+# function to subtract two matrices
+def subtract_matrices(matrix1, matrix2):
+    result_matrix = []
+    for i in range(len(matrix1)):
+        row = []
+        for j in range(len(matrix1[0])):
+            row.append(matrix1[i][j] - matrix2[i][j])
+        result_matrix.append(row)
+    return result_matrix
+
+# function to multiply two matrices
+def multiply_matrices(matrix1, matrix2):
+    result_matrix = []
+    for i in range(len(matrix1)):
+        row = []
+        for j in range(len(matrix2[0])):
+            sum = 0
+            for k in range(len(matrix2)):
+                sum += matrix1[i][k] * matrix2[k][j]
+            row.append(sum)
+        result_matrix.append(row)
+    return result_matrix
+
+# function to multiply a matrix by a scalar
+def multiply_matrix_scalar(matrix, scalar):
+    result_matrix = []
+    for i in range(len(matrix)):
+        row = []
+        for j in range(len(matrix[0])):
+            row.append(matrix[i][j] * scalar)
+        result_matrix.append(row)
+    return result_matrix
+
+# ask user for number of rows and columns
+num_rows = int(input("Enter the numbers of rows:"))
+num_cols = int(input("Enter the number of columns for the matrix: "))
+
+# create empty matrix
+matrix = []
+for i in range(num_rows):
+    row = []
+    for j in range(num_cols):
+        row.append(0)
+    matrix.append(row)
+   
+# ask user for matrix elements
+print("Enter the matrix elements:")
+for i in range(num_rows):
+    for j in range(num_cols):
+        matrix[i][j] = int(input(f"Enter element for a{i+1}{j+1}: "))
+        
+# ask user for operation to perform
+operation = input("Enter operation to perform (+ for addition, - for subtraction, * for multiplication, x for scalar multiplication, determinant for d, or cm for minor or cofector): ")
+
+if operation == 'cm':
+    if num_rows != num_cols:
+        print("Minor and cofactor are only defined for square matrices.")
+    elif num_rows == 2:
+        for i in range(num_rows):
+            for j in range(num_cols):
+                print(f"Minor of a{i+1}{j+1}:", minor(matrix, i, j))
+                print(f"Cofactor of a{i+1}{j+1}:", cofactor(matrix, i, j))
+    elif num_rows == 3:
+        for i in range(num_rows):
+            for j in range(num_cols):
+                print(f"Minor of a{i+1}{j+1}:", minor(matrix, i, j))
+                print(f"Cofactor of a{i+1}{j+1}:", cofactor(matrix, i, j))
+
+
+elif operation == '+':
+    # ask user for second matrix
+    print("Enter the second matrix:")
+    matrix2 = []
+    for i in range(num_rows):
+        row = []
+        for j in range(num_cols):
+            row.append(0)
+        matrix2.append(row)
+    print("Enter the matrix elements:")
+    for i in range(num_rows):
+        for j in range(num_cols):
+            matrix2[i][j] = int(input(f"Enter element for b{i+1}{j+1}: "))
+    result_matrix = add_matrices(matrix, matrix2)
+    print("Resultant matrix:")
+    print_matrix(result_matrix)
+
+elif operation == '-':
+    # ask user for second matrix
+    print("Enter the second matrix:")
+    matrix2 = []
+    for i in range(num_rows):
+        row = []
+        for j in range(num_cols):
+            row.append(0)
+        matrix2.append(row)
+    print("Enter the matrix elements:")
+    for i in range(num_rows):
+        for j in range(num_cols):
+            matrix2[i][j] = int(input(f"Enter element for b{i+1}{j+1}: "))
+    result_matrix = subtract_matrices(matrix, matrix2)
+    print("Resultant matrix:")
+    print_matrix(result_matrix)
+
+elif operation == '*':
+    # ask user for second matrix
+    print("Enter the second matrix:")
+    matrix2 = []
+    for i in range(num_cols):
+        row = []
+        for j in range(num_rows):
+            row.append(0)
+        matrix2.append(row)
+    print("Enter the matrix elements:")
+    for i in range(num_cols):
+        for j in range(num_rows):
+            matrix2[i][j] = int(input(f"Enter element for b{i+1}{j+1}: "))
+    result_matrix = multiply_matrices(matrix, matrix2)
+    print("Resultant matrix:")
+    print_matrix(result_matrix)
+
+elif operation == 'x':
+    scalar = int(input("Enter scalar value: "))
+    result_matrix = multiply_matrix_scalar(matrix, scalar)
+    print("Resultant matrix:")
+    print_matrix(result_matrix)
+
+elif operation == 'd':
+    if num_rows != num_cols:
+        print("Determinant is only defined for square matrices.")
+    elif num_rows == 2:
+        det = determinant_2x2(matrix)
+        print(f"Determinant is: {det}")
+    elif num_rows == 3:
+        det = determinant_3x3(matrix)
+        print(f"Determinant is: {det}")
+    else:
+        print("Determinant calculation is not supported for matrices larger than 3x3.")
